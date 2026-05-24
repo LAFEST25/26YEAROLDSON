@@ -1,0 +1,213 @@
+@font-face {
+    font-family: "BEASIGNE";
+    src: url("../contacts-main/Panchang-Regular.woff");
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "BEASIGNE", sans-serif;
+    font-size:0.95em;
+}
+
+/* wrapper */
+.nav-wrapper {
+  position: fixed;
+  top: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+}
+
+/* main container */
+.nav-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+}
+
+/* center image */
+.nav-center img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+/* links base style */
+.nav-left, .nav-right {
+  display: flex;
+  gap: 20px;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+    background: rgba(0, 6, 23, 0.532);
+  padding: 10px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(100px);
+}
+
+/* left side hidden position */
+.nav-left {
+  right: 100%;
+  transform: translateX(30px);
+}
+
+/* right side hidden position */
+.nav-right {
+  left: 100%;
+  transform: translateX(-30px);
+}
+
+/* links styling */
+.nav-left a,
+.nav-right a {
+  color: rgb(53, 141, 229);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.nav-left a:hover,
+.nav-right a:hover {
+  background: white;
+  color: black;
+  
+}
+
+/* ACTIVE STATE */
+.nav-container.active .nav-left,
+.nav-container.active .nav-right {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+/* optional hover effect on image */
+.nav-container.active .nav-center img {
+  transform: scale(1.1);
+}
+
+/* Mobile-only hamburger menu */
+.nav-toggle-checkbox {
+  display: none;
+}
+
+.mobile-hamburger {
+  display: none;
+}
+
+.mobile-hamburger span {
+  display: block;
+  width: 22px;
+  height: 3px;
+  background: #00e6ff;
+  border-radius: 999px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.mobile-hamburger span + span {
+  margin-top: 5px;
+}
+
+.nav-mobile {
+  display: none;
+}
+
+@media (max-width:730px) {
+  /* Keep wrapper and container centered on mobile */
+  .nav-wrapper {
+    left: 98%;
+    transform: translateX(-50%);
+    width: auto;
+    padding: 0;
+  }
+
+  .nav-container {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    backdrop-filter: none;
+    position: relative;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .mobile-hamburger {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: auto;
+    background: transparent;
+    border: none;
+    z-index: 1100;
+  }
+
+  .mobile-hamburger span {
+    background: #00e6ff;
+  }
+
+  .nav-mobile {
+    display: none;
+    position: absolute;
+    top: 64px;
+  
+    transform: translateX(-50%);
+    width: 23rem;
+    max-width: none;
+    padding: 6px 12px;
+    background: rgba(0, 6, 23, 0.98);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+    z-index: 1050;
+  }
+
+  .nav-toggle-checkbox:checked ~ .nav-mobile {
+    display: flex;
+  }
+
+  .nav-mobile a {
+    color: #00e6ff;
+    font-family: "BEASIGNE", sans-serif;
+    text-decoration: none;
+    width: 100%;
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0,230,255,0.25);
+  }
+
+  .nav-mobile a:hover {
+    background: rgba(0,230,255,0.06);
+    color: #bffcff;
+  }
+
+  .nav-left,
+  .nav-right {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-center img {
+    display: none !important;
+  }
+}
