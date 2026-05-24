@@ -660,7 +660,7 @@ styleSheet.textContent = `
     .nav-item .nav-label { font-size: 14px !important; letter-spacing: 2px !important; }
     .nav-item .nav-subtitle { font-size: 6px !important; letter-spacing: 1px !important; }
     .nav-item .nav-marker { width: 10px !important; margin-bottom: 4px !important; }
-    .bottom-title { transform: translateX(-50%) !important; bottom: 58px !important; }
+    .bottom-title { transform: translateX(-50%) !important; bottom: 66px !important; }
     .top-title .top-title-main { font-size: 28px !important; letter-spacing: 8px !important; margin-top: 50px !important; }
     .top-title { padding-top: 12px !important; }
     .bottom-title .bottom-title-tagline, .bottom-title .bottom-title-tagline2 { font-size: 13px !important; letter-spacing: 3px !important; }
@@ -677,7 +677,7 @@ styleSheet.textContent = `
     .nav-item[data-pos="bl"] { left: 5px !important; bottom: 35px !important; }
     .nav-item .nav-label { font-size: 12px !important; letter-spacing: 1.5px !important; }
     .nav-item .nav-subtitle { display: none !important; }
-    .bottom-title { transform: translateX(-50%) !important; bottom: 48px !important; }
+    .bottom-title { transform: translateX(-50%) !important; bottom: 56px !important; }
     .top-title .top-title-main { font-size: 22px !important; letter-spacing: 6px !important; margin-top: 50px !important; }
     .top-title { padding-top: 8px !important; }
     .bottom-title .bottom-title-tagline, .bottom-title .bottom-title-tagline2 { font-size: 13px !important; letter-spacing: 2px !important; }
