@@ -11,15 +11,25 @@ async function copyNumber(button) {
   try {
     await navigator.clipboard.writeText(text);
 
+    // 1. Add the class
     button.classList.add("copied");
     const original = button.textContent;
     button.textContent = "✓";
 
+    // 2. FORCE STYLES DIRECTLY (Temporary Test)
+    button.style.backgroundColor = "#08CB00";
+    button.style.borderColor = "#08CB00";
+    button.style.color = "rgba(255, 255, 255, 1)";
+
     setTimeout(() => {
       button.classList.remove("copied");
       button.textContent = original;
-    }, 2000);
-  } catch (err) {
+
+      // 3. RESET STYLES DIRECTLY
+      button.style.backgroundColor = "";
+      button.style.borderColor = "";
+      button.style.color = "";
+    }, 2000);}catch (err) {
     console.error("Clipboard failed:", err);
     button.classList.add("error");
     setTimeout(() => button.classList.remove("error"), 2000);
