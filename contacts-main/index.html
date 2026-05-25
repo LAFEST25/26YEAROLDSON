@@ -15,9 +15,22 @@
 <body>
 
     
-    <div class="nav-wrapper">
+   <div class="nav-wrapper">
 
   <div class="nav-container" id="navContainer">
+    <input type="checkbox" id="navToggleCheckbox" class="nav-toggle-checkbox" aria-hidden="true" />
+    <label for="navToggleCheckbox" class="custom-toggler mobile-hamburger" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+    <div class="nav-mobile" aria-hidden="true">
+      <a href="../index.html">HOME</a>
+      <a href="../rules/index.html">RULES</a>
+      <a href="../leg/index.html">LEGACY</a>
+      <a href="../contacts-main/index.html">CONTACTS</a>
+      <a href="../eventsv1-main/index.html">EVENTS</a>
+    </div>
 
     <!-- Left links -->
     <div class="nav-left">
@@ -33,17 +46,13 @@
     <!-- Right links -->
     <div class="nav-right">
       <a href="../leg/index.html">LEGACY</a>
-      <a href="../eventsv1-main/index.html">EVENTS</a>
+      <a href="../contacts-main/index.html">CONTACTS</a>
     </div>
 
   </div>
 
 </div>
 
-
-    <video autoplay muted loop playsinline class="bg-video">
-        <source src="lafestlogocontactsbg.mp4" type="video/mp4">
-    </video>
 
     <div class="overlay"></div>
     <div class="glitch-overlay"></div>
