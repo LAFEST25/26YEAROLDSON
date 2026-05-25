@@ -31,6 +31,17 @@
   padding: 10px 20px;
   border-radius: 50px;
   backdrop-filter: blur(10px);
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-container.nav-hidden {
+  transform: translateY(-110%);
+}
+
+@media (max-width: 768px) {
+  .nav-container.nav-hidden {
+    transform: translateY(0) !important;
+  }
 }
 
 /* center image */
