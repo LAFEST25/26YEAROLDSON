@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>LEGACY</title>
+    <title>LA Fest Legacy - Cinematic Universe</title>
     <link rel="stylesheet" href="../nav.css">
 
     <style>
@@ -100,19 +100,6 @@
 <div class="nav-wrapper">
 
   <div class="nav-container" id="navContainer">
-    <input type="checkbox" id="navToggleCheckbox" class="nav-toggle-checkbox" aria-hidden="true" />
-    <label for="navToggleCheckbox" class="custom-toggler mobile-hamburger" aria-label="Toggle navigation">
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
-    <div class="nav-mobile" aria-hidden="true">
-      <a href="../index.html">HOME</a>
-      <a href="../rules/index.html">RULES</a>
-      <a href="../leg/index.html">LEGACY</a>
-      <a href="../contacts-main/index.html">CONTACTS</a>
-      <a href="../eventsv1-main/index.html">EVENTS</a>
-    </div>
 
     <!-- Left links -->
     <div class="nav-left">
@@ -127,7 +114,7 @@
 
     <!-- Right links -->
     <div class="nav-right">
-      <a href="../leg/index.html">LEGACY</a>
+      <a href="../eventsv1-main/index.html">EVENTS</a>
       <a href="../contacts-main/index.html">CONTACTS</a>
     </div>
 
@@ -157,7 +144,7 @@
     <div id="auraTextContainer">
         <div class="aura-text" id="auraTextBase">
             <div class="aura-p1">VISIONS OF THE FUTURE</div>
-            <div class="aura-p2">SHAPED BY THE PAST</div>
+            <div class="aura-p2">MOULDED BY THE PAST</div>
         </div>
     </div>
 
@@ -687,25 +674,79 @@ const yearData = {
 
             // Aura Overlay logic for 25
             if (logo25Mesh) {
-                const dist = camera.position.distanceTo(logo25Mesh.position);
                 const auraContainer = document.getElementById('auraTextContainer');
+                
                 if (auraContainer) {
-                    // Map 3D position to 2D screen
+                    if (typeof window.auraState === 'undefined') window.auraState = 'hidden';
+                    
                     const tempV = new THREE.Vector3();
                     tempV.copy(logo25Mesh.position);
                     tempV.project(camera);
+                    
+                    const dist = camera.position.distanceTo(logo25Mesh.position);
+                    const now = performance.now();
 
-                    if (dist < 150 && tempV.z < 1) { // Only show when near AND in front of camera
-                        auraContainer.style.opacity = Math.max(0, 1 - (dist - 50) / 100);
-                        
-                        const x = (tempV.x * .5 + .5) * innerWidth;
-                        const y = (tempV.y * -.5 + .5) * innerHeight;
-                        
-                        // Move the container to exactly track logo 25
+                    // Map state strictly by scroll progress ('current')
+                    // current starts at 0 (Logo 26), and Logo 25 is exactly at current = 1.0
+                    if (current < 0.96) {
+                        window.auraState = 'approaching';
+                    } else if (current >= 0.96 && current < 1.08) {
+                        window.auraState = 'locked';
+                    } else if (current >= 1.08) {
+                        if (window.auraState === 'locked' || window.auraState === 'approaching') {
+                            window.auraState = 'pinned_fading';
+                            window.auraPinnedTime = now;
+                        } else if (window.auraState !== 'pinned_fading') {
+                            window.auraState = 'hidden';
+                        }
+                    }
+
+                    if (!window.lastAuraX) {
+                        window.lastAuraX = innerWidth / 2;
+                        window.lastAuraY = innerHeight / 2;
+                    }
+
+                    if (window.auraState === 'approaching') {
+                        if (dist < 150 && tempV.z < 1) { 
+                            // Only track while clearly visible in front of camera
+                            auraContainer.style.opacity = Math.max(0, 1 - (dist - 65) / 85);
+                            const x = (tempV.x * .5 + .5) * innerWidth;
+                            const y = (tempV.y * -.5 + .5) * innerHeight;
+                            
+                            window.lastAuraX = x;
+                            window.lastAuraY = y;
+                            
+                            const textBase = document.getElementById('auraTextBase');
+                            if (textBase) {
+                                textBase.style.transition = 'none';
+                                textBase.style.left = `${x}px`;
+                                textBase.style.top = `${y}px`;
+                            }
+                        } else {
+                            auraContainer.style.opacity = 0;
+                        }
+                    } else if (window.auraState === 'locked') {
+                        // Freeze exactly on screen at the apex of user focus
+                        auraContainer.style.opacity = 1;
                         const textBase = document.getElementById('auraTextBase');
                         if (textBase) {
-                            textBase.style.left = `${x}px`;
-                            textBase.style.top = `${y}px`;
+                            textBase.style.transition = 'none';
+                            textBase.style.left = `${window.lastAuraX}px`;
+                            textBase.style.top = `${window.lastAuraY}px`;
+                        }
+                    } else if (window.auraState === 'pinned_fading') {
+                        // Keep pinned exactly on screen. Fade out over 3 seconds.
+                        const elapsed = now - (window.auraPinnedTime || now);
+                        if (elapsed < 3000) {
+                            auraContainer.style.opacity = elapsed > 2000 ? 1 - ((elapsed - 2000) / 1000) : 1;
+                            const textBase = document.getElementById('auraTextBase');
+                            if (textBase) {
+                                textBase.style.transition = 'none';
+                                textBase.style.left = `${window.lastAuraX}px`;
+                                textBase.style.top = `${window.lastAuraY}px`;
+                            }
+                        } else {
+                            auraContainer.style.opacity = 0;
                         }
                     } else {
                         auraContainer.style.opacity = 0;
