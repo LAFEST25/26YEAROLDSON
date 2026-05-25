@@ -643,7 +643,7 @@ styleSheet.textContent = `
     .nav-item .nav-label { font-size: 16px !important; letter-spacing: 3px !important; }
     .nav-item .nav-subtitle { font-size: 7px !important; letter-spacing: 1.5px !important; }
     .nav-item .nav-marker { width: 12px !important; margin-bottom: 5px !important; }
-    .bottom-title { transform: translateX(-50%) !important; bottom: 100px !important; line-height: 0.1 }
+    .bottom-title { transform: translateX(-50%) !important; bottom: 100px !important; line-height: 0.1; }
     .top-title .top-title-main { font-size: 36px !important; letter-spacing: 10px !important; margin-top: 50px !important; }
     .top-title { padding-top: 18px !important; }
     .top-title .top-title-year { display: none !important; }
