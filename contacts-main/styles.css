@@ -508,7 +508,7 @@ h1 {
 @media (min-width: 768px) and (max-width: 1099px) {
   .card.center-card {
     grid-column: 1 / -1; /* occupy full row */
-    justify-self: right;
+    justify-self: start;
     width: min(420px, 100%);
   }
 }
