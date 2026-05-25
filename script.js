@@ -727,12 +727,12 @@ document.body.appendChild(topTitleEl);
 // Title at bottom center
 const titleEl = document.createElement('div');
 titleEl.className = 'bottom-title';
-titleEl.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none;';
+titleEl.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none;width:100%;max-width:320px;';
 titleEl.innerHTML = `
-  <div class="bottom-title-line" style="width:60px;height:1px;background:rgba(100,170,255,0.2);margin:0 auto 14px;"></div>
-  <div class="bottom-title-tagline" style="font-size:16px;letter-spacing:7px;padding-left:7px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;line-height:2.0;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s forwards;text-indent:0;">A CHRONICLE FORGED</div>
-  <div class="bottom-title-tagline2" style="font-size:16px;letter-spacing:7px;padding-left:7px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 2.2s forwards;text-indent:0;">A GENESIS EXALTED</div>
-  <div class="bottom-title-line2" style="width:40px;height:1px;background:rgba(100,170,255,0.15);margin:14px auto 0;opacity:0;animation:taglineFadeIn 1.0s ease 2.5s forwards;"></div>
+  <div class="bottom-title-line" style="width:40px;height:1px;background:rgba(100,170,255,0.2);margin:0 auto 10px;"></div>
+  <div class="bottom-title-tagline" style="font-size:13px;letter-spacing:4px;padding-left:4px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;margin-bottom:6px;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s forwards;text-indent:0;">A CHRONICLE FORGED</div>
+  <div class="bottom-title-tagline2" style="font-size:13px;letter-spacing:4px;padding-left:4px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 2.2s forwards;text-indent:0;">A GENESIS EXALTED</div>
+  <div class="bottom-title-line2" style="width:30px;height:1px;background:rgba(100,170,255,0.15);margin:10px auto 0;opacity:0;animation:taglineFadeIn 1.0s ease 2.5s forwards;"></div>
 `;
 document.body.appendChild(titleEl);
 
