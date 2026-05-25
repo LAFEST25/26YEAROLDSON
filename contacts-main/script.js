@@ -90,3 +90,18 @@ popup?.addEventListener("click", (event) => {
     closeCredits();
   }
 });
+
+function fixMobileBodyHeight() {
+  // Grab the exact pixel height of the viewable screen area
+  const currentHeight = window.innerHeight + 'px';
+  
+  // Apply it directly to the HTML and Body tags
+  document.documentElement.style.height = currentHeight;
+  document.body.style.height = currentHeight;
+}
+
+// Run it immediately when the page finishes loading
+window.addEventListener('load', fixMobileBodyHeight);
+
+// Run it if the user flips their phone sideways (orientation change)
+window.addEventListener('orientationchange', fixMobileBodyHeight);
