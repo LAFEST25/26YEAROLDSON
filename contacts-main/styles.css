@@ -678,9 +678,9 @@ button:focus {
 }
 
 .copy-btn.copied {
-  background: rgba(76, 175, 80, 0.2);
-  border-color: rgba(76, 175, 80, 0.8);
-  color: #4caf50;
+  background: rgba(8, 203, 0, 0.8);
+  border-color: rgba(8, 203, 0, 0.8);
+  color: transparent;
 }
 
 .copy-btn.error {
