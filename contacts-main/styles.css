@@ -20,6 +20,10 @@ body {
 body {
   background: #0a0616;
   color: #fff;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh; 
+  min-height: 100dvh;
   padding: 10px 20px 20px;
   position: relative;
   overflow-x: hidden;
@@ -27,6 +31,8 @@ body {
   background-size: cover;
   background-attachment: fixed;
 }
+
+
 
 .account-card {
   border: 2px solid rgba(0, 170, 255, 0.6);
