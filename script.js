@@ -644,7 +644,7 @@ styleSheet.textContent = `
     .nav-item .nav-subtitle { font-size: 7px !important; letter-spacing: 1.5px !important; }
     .nav-item .nav-marker { width: 12px !important; margin-bottom: 5px !important; }
     .bottom-title { transform: translateX(-50%) !important; bottom: 100px !important; }
-    .top-title .top-title-main { font-size: 36px !important; letter-spacing: 10px !important; margin-top: 50px !important; }
+    .top-title .top-title-main { font-size: 36px !important; letter-spacing: 10px !important; margin-top:70px !important; }
     .top-title { padding-top: 18px !important; }
     .top-title .top-title-year { display: none !important; }
     .bottom-title .bottom-title-tagline, .bottom-title .bottom-title-tagline2 { font-size: 13px !important; letter-spacing: 4px !important; }
@@ -661,7 +661,7 @@ styleSheet.textContent = `
     .nav-item .nav-subtitle { font-size: 6px !important; letter-spacing: 1px !important; }
     .nav-item .nav-marker { width: 10px !important; margin-bottom: 4px !important; }
     .bottom-title { transform: translateX(-50%) !important; bottom: 100px !important; }
-    .top-title .top-title-main { font-size: 28px !important; letter-spacing: 8px !important; margin-top: 50px !important; }
+    .top-title .top-title-main { font-size: 28px !important; letter-spacing: 8px !important; margin-top: 70px !important; }
     .top-title { padding-top: 12px !important; }
     .bottom-title .bottom-title-tagline, .bottom-title .bottom-title-tagline2 { font-size: 13px !important; letter-spacing: 3px !important; }
     .top-title .top-title-deco-top, .top-title .top-title-deco-bottom { display: none !important; }
