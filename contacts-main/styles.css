@@ -493,15 +493,12 @@ h1 {
   --glow-intensity: 0;
 }
 
-/* Center a specific card (Anne Maria Kurian) */
+
 .card.center-card {
-  /* match default card sizing so it looks identical to other contact cards */
-  justify-self: center;
-  text-align: center;
   width: auto;
   max-width: none;
   margin: 0;
-  padding: 32px 24px; /* same as .card */
+  padding: 32px 24px; 
 }
 
 /* On medium screens (2-column grid) keep the card centered across the row */
