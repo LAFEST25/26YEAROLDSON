@@ -727,14 +727,33 @@ document.body.appendChild(topTitleEl);
 // Title at bottom center
 const titleEl = document.createElement('div');
 titleEl.className = 'bottom-title';
-titleEl.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none;width:100%;max-width:320px;';
+
+// 1. Increased max-width to 450px so it has breathing room on mobile
+titleEl.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none;width:90%;max-width:450px;';
+
 titleEl.innerHTML = `
   <div class="bottom-title-line" style="width:40px;height:1px;background:rgba(100,170,255,0.2);margin:0 auto 10px;"></div>
-  <div class="bottom-title-tagline" style="font-size:13px;letter-spacing:4px;padding-left:4px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;margin-bottom:6px;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s forwards;text-indent:0;">A CHRONICLE FORGED</div>
-  <div class="bottom-title-tagline2" style="font-size:13px;letter-spacing:4px;padding-left:4px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 2.2s forwards;text-indent:0;">A GENESIS EXALTED</div>
+  
+  <div class="bottom-title-tagline" style="font-size:13px;letter-spacing:4px;padding-left:4px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;margin-bottom:6px;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s forwards;text-indent:0;white-space:nowrap;">A CHRONICLE FORGED</div>
+  
+  <div class="bottom-title-tagline2" style="font-size:13px;letter-spacing:4px;padding-left:4px;color:rgba(140,190,255,0.6);font-family:'Beasigne','Inter',sans-serif;opacity:0;animation:taglineFadeIn 1.2s cubic-bezier(0.16,1,0.3,1) 2.2s forwards;text-indent:0;white-space:nowrap;">A GENESIS EXALTED</div>
+  
   <div class="bottom-title-line2" style="width:30px;height:1px;background:rgba(100,170,255,0.15);margin:10px auto 0;opacity:0;animation:taglineFadeIn 1.0s ease 2.5s forwards;"></div>
 `;
+
 document.body.appendChild(titleEl);
+
+// 2. Add a tiny responsive CSS style block to automatically scale the font on small screens
+const style = document.createElement('style');
+style.textContent = `
+  @media (max-width: 400px) {
+    .bottom-title-tagline, .bottom-title-tagline2 {
+      font-size: 11px !important; /* Slightly smaller text */
+      letter-spacing: 3px !important; /* Slightly tighter spacing to fit small screens perfectly */
+    }
+  }
+`;
+document.head.appendChild(style);
 
 // ===== CONNECTOR DRAWING =====
 
