@@ -573,10 +573,16 @@ const yearData = {
 
             ray.setFromCamera(mouse, camera);
 
-            const hit = ray.intersectObjects(nodes, true);
+            const hit = ray.intersectObjects(nodes, false);
 
             if (hit.length) {
-                openModal(hit[0].object.userData.index);
+                let hitObject = hit[0].object;
+                while (hitObject && hitObject.userData.index === undefined) {
+                    hitObject = hitObject.parent;
+                }
+                if (hitObject && hitObject.userData.index !== undefined) {
+                    openModal(hitObject.userData.index);
+                }
             }
         });
 
