@@ -859,7 +859,7 @@ button:focus {
 .popup-box h2 {
   color: #00aaff;
   margin-bottom: 18px;
-  font-size: 2rem;
+  font-size: 1.3rem;
   letter-spacing: 1px;
 }
 
@@ -911,6 +911,7 @@ button:focus {
   position: relative;
   box-shadow: 0 0 30px rgba(0, 170, 255, 0.2);
   animation: slideIn 0.3s ease;
+  overflow: scroll;
 }
 
 @keyframes slideIn {
@@ -1065,7 +1066,7 @@ button:focus {
 
   .number {
     font-size: 0.65rem;
-    overflow: scroll;
+    overflow: hidden;
   }
 
   .footer {
