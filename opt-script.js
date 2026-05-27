@@ -454,60 +454,6 @@ function updateOrbitParticles(t) {
   orbitParticles.geometry.attributes.position.needsUpdate = true;
 }
 
-  // ===== LOGO BILLBOARD ON BLACK HOLE =====
-  // Creates a subtle glowing logo that faces the camera and fades in
-  const logoTexture = new THREE.TextureLoader().load('eventsv1-main/logocentered.png');
-  if (logoTexture) logoTexture.colorSpace = THREE.SRGBColorSpace;
-    // Logo billboard configuration: adjust these to change appearance/placement
-    const logoScale = 1;     // overall size multiplier (increase to make logo larger)
-    const logoYOffset = 0.25;   // vertical offset from black hole center (increase to move up)
-    const logoGeo = new THREE.PlaneGeometry(logoScale, logoScale);
-  const logoMat = new THREE.ShaderMaterial({
-    uniforms: {
-      uTexture: { value: logoTexture },
-      uTime: { value: 0 },
-      uOpacity: { value: 0.0 }
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main(){
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform sampler2D uTexture;
-      uniform float uTime;
-      uniform float uOpacity;
-      varying vec2 vUv;
-      void main(){
-        vec4 tex = texture2D(uTexture, vUv);
-        float mask = tex.b * 0.7 + tex.r * 0.1 + tex.g * 0.15;
-        mask = clamp(mask * 2.2, 0.0, 1.0);
-        float pulse = sin(uTime * 1.8) * 0.09 + 0.98; // slightly stronger pulse
-        vec3 logoCol = vec3(0.45, 1.0, 2.0) * pulse; // Brighter blue tint for a more visible logo
-        float glow = smoothstep(0.0, 0.35, mask) * 0.5; // Stronger outer glow
-        vec3 col = logoCol * mask + vec3(0.05, 0.15, 0.5) * glow;
-        float alpha = mask * uOpacity * 1.2; // Slight boost to overall brightness and alpha
-        gl_FragColor = vec4(col * 0.2, alpha); // Adjusted for better visibility
-      }
-    `,
-    transparent: true,
-    depthWrite: false,
-    depthTest: false,
-    blending: THREE.AdditiveBlending,
-    side: THREE.DoubleSide
-  });
-  const logoBillboard = new THREE.Mesh(logoGeo, logoMat);
-  logoBillboard.name = 'logoBillboard';
-  logoBillboard.position.y = BH_CENTER_Y + logoYOffset;
-  logoBillboard.renderOrder = 15;
-  bhGroup.add(logoBillboard);
-
-  // Fade the logo in after 1.5s
-  let logoFadeStart = null;
-  setTimeout(() => { logoFadeStart = clock ? clock.getElapsedTime() : null; }, 1500);
-
 // ===== HUD NAV LINKS =====
 
 const beasigneFont = document.createElement('style');
@@ -989,16 +935,6 @@ function animate() {
   nearStars.rotation.y = -t * 0.005;
 
   controls.update();
-
-  // Billboard logo to always face camera and handle fade/time uniforms
-  if (typeof logoBillboard !== 'undefined' && logoBillboard) {
-    logoBillboard.quaternion.copy(camera.quaternion);
-    if (logoFadeStart !== null) {
-      const fadeT = Math.min((t - logoFadeStart) / 1.2, 1.0);
-      logoMat.uniforms.uOpacity.value = fadeT * 0.88;
-    }
-    logoMat.uniforms.uTime.value = t;
-  }
 
   // Project black hole center to screen coordinates (world position of group)
   tempVec.set(0, bhGroup.position.y, 0);
