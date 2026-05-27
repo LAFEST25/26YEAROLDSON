@@ -4,6 +4,31 @@
   font-style: normal;
 }
 
+/* --- Custom Cyberpunk Scrollbar --- */
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgb(0, 0, 0);
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 10, 20, 0.4);
+  /* border-left: 1px dotted rgba(0, 229, 255, 0.3); */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #010e4a 0%, #008cff 100%);
+  border-radius: 0px;
+  border: 1px solid #3f2a7e;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.6), 0 0 5px rgba(255, 0, 60, 0.6);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00e5ff 0%, #12043d 100%);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 1), 0 0 10px rgba(255, 0, 60, 1);
+}
+
+/* ---------------------------------- */
+
 * {
   margin: 0;
   padding: 0;
