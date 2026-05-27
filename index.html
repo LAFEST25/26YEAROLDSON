@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="icon" type="image/png" href="../lafestlogo26favicon.png" sizes="34x34"/>
 <title>LA 2K26.</title>
+<link rel="preload" as="video" href="logofirst6secs.mp4" type="video/mp4">
+<link rel="icon" type="image/png" href="lafestlogo26favicon.png" sizes="34x34"/>
 
 <style>
     *{
@@ -170,6 +171,31 @@ canvas {
   pointer-events: auto;
 }
 
+/* Custom Preloader */
+#videoLoader {
+  position: absolute;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 2px;
+}
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+#loaderText {
+  font-size: 14px;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* nav */
 /* NAV BASE */
@@ -287,392 +313,102 @@ canvas {
 </head>
 
 <body>
+  <div id="loadingScreen">
+    <div id="videoLoader">
+      <div class="loader-spinner"></div>
+      <div id="loaderText">LOADING... 0%</div>
+    </div>
+    <!-- Video is initially empty and paused. We will drop a Blob URL here. -->
+    <video id="introVideo" muted playsinline disableRemotePlayback disablePictureInPicture></video>
+  </div>
 
   <div id="root"></div>
-  <script type="module" src="script.js"></script>
 
-<
+  <script>
+    const introVideo = document.getElementById('introVideo');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const videoLoader = document.getElementById('videoLoader');
+    const loaderText = document.getElementById('loaderText');
 
-
-
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.165/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165/examples/jsm/"
-  }
-}
-</script>
-
-<script type="module">
-
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { TextureLoader } from 'three';
-
-// ---------------- SCENE ----------------
-const scene = new THREE.Scene();
-
-const camera = new THREE.PerspectiveCamera(
-  40,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  100
-);
-
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-const loadingScreen = document.getElementById('loadingScreen');
-const loadingVideo = document.getElementById('loadingVideo');
-const siteContent = document.getElementById('siteContent');
-let helmetReady = false;
-let videoEnded = false;
-
-function showSite() {
-  siteContent?.classList.add('visible');
-}
-
-function hideLoadingScreen() {
-  if (!loadingScreen || loadingScreen.classList.contains('hide')) return;
-  loadingScreen.classList.add('hide');
-  showSite();
-  setTimeout(() => loadingScreen?.remove(), 800);
-}
-
-function tryHideLoadingScreen() {
-  if (helmetReady && videoEnded) {
-    hideLoadingScreen();
-  }
-}
-
-if (loadingVideo) {
-  loadingVideo.addEventListener('ended', () => {
-    videoEnded = true;
-    tryHideLoadingScreen();
-  }, { once: true });
-
-  loadingVideo.play().catch(() => {});
-}
-
-setTimeout(() => {
-  if (loadingScreen && !loadingScreen.classList.contains('hide')) {
-    hideLoadingScreen();
-  }
-}, 10000);
-
-camera.position.set(0, 0.2, 4);
-
-
-// ---------------- RENDERER ----------------
-// const renderer = new THREE.WebGLRenderer({
-//   antialias: true
-// });
-
-const renderer = new THREE.WebGLRenderer({
-  antialias: true,
-  alpha: true   // IMPORTANT
-});
-
-scene.background = null;
-// scene.fog = new THREE.Fog(0x050505, 3, 8);
-
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-
-// IMPORTANT: keep exposure LOW but not extreme
-renderer.toneMappingExposure = 0.4;
-
-siteContent?.appendChild(renderer.domElement);
-
-
-// ---------------- LIGHTING (simple & safe) ----------------
-
-// soft base light (prevents black crush)
-scene.add(new THREE.AmbientLight(0x000000, 0.15));
-
-// main light (front top)
-const light = new THREE.DirectionalLight(0x0000ff, 1.5);
-light.position.set(3, 5, 3);
-scene.add(light);
-
-// subtle side fill
-const fill = new THREE.DirectionalLight(0x000000, 0.6);
-fill.position.set(-3, 2, 2);
-scene.add(fill);
-
+    let scriptLoaded = false;
+    function loadThreeJS() {
+      if (scriptLoaded) return;
+      scriptLoaded = true;
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'opt-script.js';
+      document.body.appendChild(script);
+    }
     
-// ---------------- MODEL ----------------
-const loader = new GLTFLoader();
+    // 1. Fetch the video fully before playing to guarantee zero buffering lag.
+    function preloadVideo(url) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'blob';
 
-let helmet;
+      xhr.onprogress = function(e) {
+        if (e.lengthComputable) {
+          const percentComplete = Math.floor((e.loaded / e.total) * 100);
+          loaderText.innerText = `LOADING... ${percentComplete}%`;
+        }
+      };
 
-loader.load('./helmet.glb', (gltf) => {
-  helmet = gltf.scene;
-  helmet.scale.set(1.2, 1.2, 1.2);
-  scene.add(helmet);
-  helmetReady = true;
-  tryHideLoadingScreen();
-});
+      xhr.onload = function() {
+        if (this.status === 200) {
+          const videoBlob = this.response;
+          const vidURL = URL.createObjectURL(videoBlob);
+          
+          // Hide loader, load blob into video, and play it
+          videoLoader.style.display = 'none';
+          introVideo.src = vidURL;
+          introVideo.play();
+        }
+      };
 
+      xhr.onerror = function() {
+        // Fallback: if fetch blocks, just play it normally
+        loaderText.innerText = `LOADING...`;
+        introVideo.src = url;
+        introVideo.play();
+        videoLoader.style.display = 'none';
+      };
 
+      xhr.send();
+    }
 
+    // Start full preload of the video 
+    preloadVideo("logofirst6secs.mp4");
 
-// ---------------- MOUSE CONTROL ----------------
-let mx = 0, my = 0;
-
-document.addEventListener('mousemove', (e) => {
-  mx = (e.clientX / window.innerWidth - 0.5);
-  my = (e.clientY / window.innerHeight - 0.5);
-});
-
-
-// SCREEN SIDE HOVER FOR NAV
-document.addEventListener("mousemove", (event) => {
-
-  const mouseX = event.clientX;
-  const width = window.innerWidth;
-
-  if (mouseX < width * 0.4) {
-    hoverLeft = true;
-    hoverRight = false;
-    // cancel hide timers
-    clearTimeout(hideTimerLeft);
-    clearTimeout(hideTimerRight);
-  } else if (mouseX > width * 0.6) {
-    hoverRight = true;
-    hoverLeft = false;
-    // cancel hide timers
-    clearTimeout(hideTimerLeft);
-    clearTimeout(hideTimerRight);
-  } else {
-    // center, start hide timers
-    clearTimeout(hideTimerLeft);
-    clearTimeout(hideTimerRight);
-    hideTimerLeft = setTimeout(() => {
-      if (!focusLeft && !lockedLeft) {
-        hoverLeft = false;
-        updateNav();
+    introVideo.addEventListener('timeupdate', () => {
+      // Load Three.js scene 3 seconds into the 6 second video
+      // This leaves enough time for shader compilation in the background
+      if (introVideo.currentTime > 3.0) {
+        loadThreeJS();
       }
-    }, 500);
-    hideTimerRight = setTimeout(() => {
-      if (!focusRight && !lockedRight) {
-        hoverRight = false;
-        updateNav();
+    });
+
+    function removeLoadingScreen() {
+      loadThreeJS(); // Fallback to ensure it loads if skipped
+      if (!loadingScreen.classList.contains('hide')) {
+        loadingScreen.classList.add('hide');
+        setTimeout(() => {
+          loadingScreen.remove();
+        }, 1000); // 1s matches the CSS transition opacity 0.8s
       }
-    }, 500);
-  }
+    }
 
-  updateNav();
+    // When the video ends naturally
+    introVideo.addEventListener('ended', removeLoadingScreen);
+    
+    // Failsafe in case video can't play or errors
+    introVideo.addEventListener('error', removeLoadingScreen);
+    
+    // Click to skip functionality for better UX
+    loadingScreen.addEventListener('click', removeLoadingScreen);
 
-});
-
-const navLeft = document.getElementById("navLeft");
-const navRight = document.getElementById("navRight");
-const arrowLeft = document.querySelector('.nav-arrow.left');
-const arrowRight = document.querySelector('.nav-arrow.right');
-
-let hoverLeft = false;
-let hoverRight = false;
-
-let focusLeft = false;
-let focusRight = false;
-
-let lockedLeft = false;
-let lockedRight = false;
-
-let hideTimerLeft;
-let hideTimerRight;
-function updateNav() {
-
-  const leftActive =
-    hoverLeft || focusLeft || lockedLeft;
-
-  const rightActive =
-    hoverRight || focusRight || lockedRight;
-
-  navLeft.classList.toggle("active", leftActive);
-  navRight.classList.toggle("active", rightActive);
-
-  arrowLeft.classList.toggle('hidden', leftActive);
-  arrowRight.classList.toggle('hidden', rightActive);
-}
-function checkHelmetHover() {
-  if (!helmet) return;
-
-  // Flatten all meshes inside helmet for raycasting
-  const meshes = [];
-  helmet.traverse((child) => {
-    if (child.isMesh) meshes.push(child);
-  });
-
-  raycaster.setFromCamera(mouse, camera);
-
-  const intersects = raycaster.intersectObjects(meshes, true);
-
-  if (intersects.length > 0) {
-    const point = intersects[0].point; // Intersection point in world space
-
-    // Determine side: relative to helmet center
-    const helmetPos = helmet.position;
-
-    state.hoverLeft = point.x < helmetPos.x;
-    state.hoverRight = point.x >= helmetPos.x;
-
-    updateNav();
-  } else {
-    // Optionally, start 2s timer to hide nav if not hovering nav itself
-    startNavHideTimers();
-  }
-}
-navLeft.addEventListener("mouseenter", () => {
-  focusLeft = true;
-  updateNav();
-});
-
-navLeft.addEventListener("mouseleave", () => {
-  focusLeft = false;
-  updateNav();
-});
-
-navRight.addEventListener("mouseenter", () => {
-  focusRight = true;
-  updateNav();
-});
-
-navRight.addEventListener("mouseleave", () => {
-  focusRight = false;
-  updateNav();
-});
-navLeft.addEventListener("click", (e) => {
-  e.stopPropagation();
-  lockedLeft = true;
-  updateNav();
-});
-
-navRight.addEventListener("click", (e) => {
-  e.stopPropagation();
-  lockedRight = true;
-  updateNav();
-});
-
-document.addEventListener("click", (e) => {
-
-  if (!navLeft.contains(e.target) &&
-      !navRight.contains(e.target)) {
-
-    lockedLeft = false;
-    lockedRight = false;
-
-    updateNav();
-  }
-});
-
-
-
-// ---------------- LOOP ----------------
-function animate() {
-  requestAnimationFrame(animate);
-
-  if (helmet) {
-    helmet.rotation.y += (mx * 0.5 - helmet.rotation.y) * 0.06;
-    helmet.rotation.x += (my * 0.2 - helmet.rotation.x) * 0.06;
-  }
-
-  renderer.render(scene, camera);
-}
-
-animate();
-
-
-// ---------------- RESIZE ----------------
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-</script>
-
-<script>
-const grid = document.getElementById('grid');
-const dot = document.getElementById('dot');
-
-const cols = 32;
-const rows = 18;
-const total = cols * rows;
-
-const cells = [];
-
-/* CREATE GRID */
-for(let i=0;i<total;i++){
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    grid.appendChild(cell);
-    cells.push(cell);
-}
-
-let mouseX = window.innerWidth/2;
-let mouseY = window.innerHeight/2;
-
-document.addEventListener('mousemove',(e)=>{
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
-    dot.style.left = mouseX + 'px';
-    dot.style.top = mouseY + 'px';
-
-    updateGlow();
-});
-
-function updateGlow(){
-
-    const cellWidth = window.innerWidth / cols;
-    const cellHeight = window.innerHeight / rows;
-
-    const centerCol = Math.floor(mouseX / cellWidth);
-    const centerRow = Math.floor(mouseY / cellHeight);
-
-    cells.forEach((cell,index)=>{
-
-    const col = index % cols;
-    const row = Math.floor(index / cols);
-
-    const dx = col - centerCol;
-    const dy = row - centerRow;
-
-    const dist = Math.sqrt(dx*dx + dy*dy);
-
-    const radius = 6;
-
-    let intensity = Math.max(0, 1 - (dist / radius));
-
-    intensity = Math.pow(intensity, 1.8);
-
-    /* BASE GRID VISIBILITY */
-    const baseAlpha = 0.05;
-
-    /* GLOW VALUES */
-    const borderAlpha = baseAlpha + (intensity * 0.5);
-    const glowAlpha = intensity * 0.22;
-
-    cell.style.borderColor =
-        `rgba(64,224,255,${borderAlpha})`;
-
-    cell.style.boxShadow = `
-        inset 0 0 ${10 * intensity}px rgba(64,224,255,${glowAlpha}),
-        0 0 ${30 * intensity}px rgba(64,224,255,${glowAlpha})
-    `;
-
-    cell.style.background =
-        `rgba(64,224,255,${intensity * 0.035})`;
-
-});
-}
-</script>
+    // Hard fallback removed: we only fade out if video finishes or user clicks to skip
+    // because downloading over a slow connection might take longer than 7s.
+  </script>
 
 </body>
 </html>
