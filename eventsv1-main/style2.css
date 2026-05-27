@@ -279,7 +279,7 @@ body {
     font-family: "Panchang";
     font-size: 14px;
     line-height: 1.5;
-    text-align: center;
+    text-align: justify;
 }
 
 /* RIGHT SIDE */
@@ -940,8 +940,8 @@ body {
 @media screen and (max-width: 1023px) {
 
     .banner .slider {
-        width: 100px;
-        height: 220px;
+        width: 160px;
+        height: 200px;
 
         left: calc(50% - 80px);
     }
@@ -1073,7 +1073,7 @@ body {
     }
 
     .banner .content {
-        bottom: 100px;
+        bottom: 40px;
     }
 
     .banner .content h1 {
