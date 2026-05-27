@@ -267,8 +267,8 @@
 
         scene.add(stars);
 
-        /* ---------------- YEARS (1–26) ---------------- */
-        const items = Array.from({ length: 26 }, (_, i) => ({ index: 26 - i }));
+        /* ---------------- YEARS (15–26) ---------------- */
+        const items = Array.from({ length: 12 }, (_, i) => ({ index: 26 - i }));
 const yearData = {
     26: { title: "LA Fest 2025 • ", desc: "The monochrome cassette whirs to life in vibrant neon hues, drawing you into a new iteration. Its radiance spills forth, illuminating the tales etched across the walls of time. As echoes of the past emerge from this light, carve your mark into eternity. Celebrate the Silver Jubilee of An Odyssey Relived and A Legacy Revered in the timeless realm of Life and Arts." },
     25: { title: "LA Fest 2024 • ", desc: "The wheels of tradition turn once more. Etch your name in our legacy, for in this utopia, your flaws are your weapons. Glory be to life. Glory be to arts. Triumph awaits its encore." },
@@ -505,7 +505,7 @@ const yearData = {
         /* ---------------- DELAYED AUTO-SCROLL ---------------- */
         let autoScroll = false;
         let autoScrollProgress = 0;
-        const autoScrollTotal = 2000;
+        const autoScrollTotal = 1000;
         let autoScrollPaused = false;
         let userInteracted = false;
 
