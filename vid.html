@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LA 2K26.</title>
+<link rel="preload" as="video" href="logofirst6secs.mp4" type="video/mp4">
+
+<style>
+    *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+    * { margin: 0; padding: 0; outline: none !important; box-sizing: border-box; }
+    html, body, #root { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    canvas { display: block; outline: none !important; }
+    #canvas { position: absolute; top: 0; left: 0; }
+
+@font-face {
+  font-family: "BEASIGNE";
+  src: url(BEASIGNE.otf) format(opentype);
+}
+
+
+
+body {
+  font-family: "BEASIGNE";
+  margin: 0;
+  overflow: hidden;
+  background: #050505;
+  cursor: default;
+}
+
+
+/* canvas (Three.js) on top */
+canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none; /* important so mouse still affects grid */
+}
+
+
+
+/* MAIN GRID */
+.grid{
+      position: absolute;
+  inset: 0;
+  z-index: 0;
+    /* position:relative; */
+    width:100vw;
+    height:100vh;
+    display:grid;
+    /* change density here */
+    grid-template-columns:repeat(32, 1fr);
+    grid-template-rows:repeat(18, 1fr);
+}
+
+.cell{
+    position:relative;
+
+    border-right:1px solid rgba(255,255,255,0.05);
+    border-bottom:1px solid rgba(255,255,255,0.05);
+
+    transition:
+        border-color .08s linear,
+        box-shadow .08s linear,
+        background .08s linear;
+}
+
+/* ACTIVE GLOW */
+.cell.active{
+    border-color:rgba(64, 224, 255,0.95);
+
+    box-shadow:
+        inset 0 0 12px rgba(64, 224, 255,0.25),
+        0 0 10px rgba(64, 224, 255,0.4),
+        0 0 25px rgba(64, 224, 255,0.25);
+
+    z-index:2;
+}
+
+/* stronger center */
+.cell.core{
+    border-color:#40e0ff;
+
+    background:rgba(64, 224, 255,0.08);
+
+    box-shadow:
+        inset 0 0 25px rgba(64, 224, 255,0.35),
+        0 0 15px rgba(64, 224, 255,0.8),
+        0 0 40px rgba(64, 224, 255,0.45);
+}
+
+/* blue cursor point */
+.cursor-dot{
+    position:fixed;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#a6e7ff;
+
+    box-shadow:
+        0 0 10px #8ddfff,
+        0 0 30px #8ddfff,
+        0 0 60px #8ddfff;
+
+    pointer-events:none;
+    transform:translate(-50%, -50%);
+    z-index:9999;
+}
+
+/* cinematic dark edges */
+.vignette{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background:
+        radial-gradient(circle at center,
+        transparent 45%,
+        rgba(0,0,0,.55) 100%);
+}
+
+/* loading overlay */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#loadingScreen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+#loadingScreen video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+#loadingScreen.hide {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+
+.site-content {
+  opacity: 0;
+  transition: opacity 0.8s ease 0.2s;
+  pointer-events: none;
+}
+
+.site-content.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Custom Preloader */
+#videoLoader {
+  position: absolute;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 2px;
+}
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+#loaderText {
+  font-size: 14px;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* nav */
+/* NAV BASE */
+.nav-left,
+.nav-right {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: all 0.4s ease;
+  z-index: 10;
+}
+
+.nav-left {
+  left: 60px;
+  transform: translateY(-50%) translateX(-20px);
+}
+
+.nav-right {
+  right: 60px;
+  transform: translateY(-50%) translateX(20px);
+}
+
+/* ACTIVE STATE */
+.nav-left.active,
+.nav-right.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* LINKS */
+.nav-left a,
+.nav-right a {
+  color: white;
+  text-decoration: none;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+
+  opacity: 0.7;
+  transition: 0.2s;
+}
+
+.nav-left a:hover,
+.nav-right a:hover {
+  opacity: 1;
+  color: #1d5ead;
+  text-shadow: 0 0 10px #1d5ead;
+  transform: translateY(-2px);
+  transition: all 0.2s;
+}
+
+/* NAV ARROWS */
+.nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  z-index: 9;
+}
+
+.nav-arrow.left {
+  left: 20px;
+}
+
+.nav-arrow.right {
+  right: 20px;
+}
+
+.nav-arrow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 10px solid transparent;
+}
+
+.nav-arrow.left::before {
+  border-right-color: #fff;
+}
+
+.nav-arrow.right::before {
+  border-left-color: #fff;
+}
+
+.nav-arrow.hidden {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+
+</style>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.module.js",
+      "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.webgpu.js",
+      "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.tsl.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/"
+    }
+  }
+  </script>
+
+</head>
+
+<body>
+  <div id="loadingScreen">
+    <div id="videoLoader">
+      <div class="loader-spinner"></div>
+      <div id="loaderText">LOADING... 0%</div>
+    </div>
+    <!-- Video is initially empty and paused. We will drop a Blob URL here. -->
+    <video id="introVideo" muted playsinline disableRemotePlayback></video>
+  </div>
+
+  <div id="root"></div>
+
+  <script>
+    const introVideo = document.getElementById('introVideo');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const videoLoader = document.getElementById('videoLoader');
+    const loaderText = document.getElementById('loaderText');
+
+    let scriptLoaded = false;
+    function loadThreeJS() {
+      if (scriptLoaded) return;
+      scriptLoaded = true;
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'script.js';
+      document.body.appendChild(script);
+    }
+    
+    // 1. Fetch the video fully before playing to guarantee zero buffering lag.
+    function preloadVideo(url) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'blob';
+
+      xhr.onprogress = function(e) {
+        if (e.lengthComputable) {
+          const percentComplete = Math.floor((e.loaded / e.total) * 100);
+          loaderText.innerText = `LOADING... ${percentComplete}%`;
+        }
+      };
+
+      xhr.onload = function() {
+        if (this.status === 200) {
+          const videoBlob = this.response;
+          const vidURL = URL.createObjectURL(videoBlob);
+          
+          // Hide loader, load blob into video, and play it
+          videoLoader.style.display = 'none';
+          introVideo.src = vidURL;
+          introVideo.play();
+        }
+      };
+
+      xhr.onerror = function() {
+        // Fallback: if fetch blocks, just play it normally
+        loaderText.innerText = `LOADING...`;
+        introVideo.src = url;
+        introVideo.play();
+        videoLoader.style.display = 'none';
+      };
+
+      xhr.send();
+    }
+
+    // Start full preload of the video 
+    preloadVideo("logofirst6secs.mp4");
+
+    introVideo.addEventListener('timeupdate', () => {
+      // Load Three.js scene 3 seconds into the 6 second video
+      // This leaves enough time for shader compilation in the background
+      if (introVideo.currentTime > 3.0) {
+        loadThreeJS();
+      }
+    });
+
+    function removeLoadingScreen() {
+      loadThreeJS(); // Fallback to ensure it loads if skipped
+      if (!loadingScreen.classList.contains('hide')) {
+        loadingScreen.classList.add('hide');
+        setTimeout(() => {
+          loadingScreen.remove();
+        }, 1000); // 1s matches the CSS transition opacity 0.8s
+      }
+    }
+
+    // When the video ends naturally
+    introVideo.addEventListener('ended', removeLoadingScreen);
+    
+    // Failsafe in case video can't play or errors
+    introVideo.addEventListener('error', removeLoadingScreen);
+    
+    // Click to skip functionality for better UX
+    loadingScreen.addEventListener('click', removeLoadingScreen);
+
+    // Hard fallback removed: we only fade out if video finishes or user clicks to skip
+    // because downloading over a slow connection might take longer than 7s.
+  </script>
+
+</body>
+</html>
