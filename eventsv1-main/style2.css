@@ -1085,7 +1085,7 @@ body {
     }
 
     .banner .content {
-        bottom: 40px;
+        bottom: 10%;
     }
 
     .banner .content h1 {
@@ -1119,7 +1119,7 @@ body {
         width: 90px;
         height: 130px;
 
-        top: 18%;
+        top: 28%;
 
         left: calc(50% - 45px);
     }
