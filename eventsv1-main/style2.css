@@ -542,6 +542,18 @@ body {
 
 
     z-index: 5;
+    animation: autoRunReverse 30s linear infinite;
+}
+
+
+@keyframes autoRunReverse {
+    from {
+        transform: translate(-50%, -50%) rotateY(0deg) rotateX(16deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotateY(-360deg) rotateX(16deg);
+    }
 }
 
 .center-banner span {
