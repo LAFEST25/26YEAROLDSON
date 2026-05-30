@@ -4,8 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LA 2K26.</title>
-<link rel="preload" as="video" href="logofirst6secs.mp4" type="video/mp4">
-<link rel="icon" type="image/png" href="lafestlogo26favicon.png" sizes="34x34"/>
+<link rel="preload" as="video" href="logofirst6secs.mp4" type="video/mp4" fetchpriority="high">
 
 <style>
     *{
@@ -171,31 +170,6 @@ canvas {
   pointer-events: auto;
 }
 
-/* Custom Preloader */
-#videoLoader {
-  position: absolute;
-  z-index: 60;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-family: 'Inter', sans-serif;
-  letter-spacing: 2px;
-}
-.loader-spinner {
-  width: 40px;
-  height: 40px;
-  border: 2px solid rgba(255,255,255,0.1);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-#loaderText {
-  font-size: 14px;
-}
-@keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* nav */
 /* NAV BASE */
@@ -297,6 +271,15 @@ canvas {
   transform: translateY(-50%) scale(0.8);
 }
 
+/* Hides the Picture-in-Picture button in Chromium browsers */
+video::-webkit-media-controls-picture-in-picture-button {
+    display: none !important;
+}
+
+/* Hides the internal native browser control wrapper entirely if you don't need it */
+video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
 </style>
 
 <script type="importmap">
@@ -314,12 +297,9 @@ canvas {
 
 <body>
   <div id="loadingScreen">
-    <div id="videoLoader">
-      <div class="loader-spinner"></div>
-      <div id="loaderText">LOADING... 0%</div>
-    </div>
-    <!-- Video is initially empty and paused. We will drop a Blob URL here. -->
-    <video id="introVideo" muted playsinline disableRemotePlayback disablePictureInPicture></video>
+    <video id="introVideo" muted autoplay playsinline disableRemotePlayback preload="auto" disablePictureInPicture>
+      <source src="logofirst6secs.mp4" type="video/mp4">
+    </video>
   </div>
 
   <div id="root"></div>
@@ -327,65 +307,50 @@ canvas {
   <script>
     const introVideo = document.getElementById('introVideo');
     const loadingScreen = document.getElementById('loadingScreen');
-    const videoLoader = document.getElementById('videoLoader');
-    const loaderText = document.getElementById('loaderText');
-
+    
+    // To ensure ZERO lag during the first crucial seconds of the video intro,
+    // we defer loading the heavy Three.js script (which compiles shaders)
+    // until the video is partially played.
     let scriptLoaded = false;
     function loadThreeJS() {
       if (scriptLoaded) return;
       scriptLoaded = true;
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = 'opt-script.js';
+      script.src = 'script.js';
       document.body.appendChild(script);
     }
     
-    // 1. Fetch the video fully before playing to guarantee zero buffering lag.
-    function preloadVideo(url) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.responseType = 'blob';
-
-      xhr.onprogress = function(e) {
-        if (e.lengthComputable) {
-          const percentComplete = Math.floor((e.loaded / e.total) * 100);
-          loaderText.innerText = `LOADING... ${percentComplete}%`;
-        }
-      };
-
-      xhr.onload = function() {
-        if (this.status === 200) {
-          const videoBlob = this.response;
-          const vidURL = URL.createObjectURL(videoBlob);
-          
-          // Hide loader, load blob into video, and play it
-          videoLoader.style.display = 'none';
-          introVideo.src = vidURL;
-          introVideo.play();
-        }
-      };
-
-      xhr.onerror = function() {
-        // Fallback: if fetch blocks, just play it normally
-        loaderText.innerText = `LOADING...`;
-        introVideo.src = url;
-        introVideo.play();
-        videoLoader.style.display = 'none';
-      };
-
-      xhr.send();
-    }
-
-    // Start full preload of the video 
-    preloadVideo("logofirst6secs.mp4");
-
-    introVideo.addEventListener('timeupdate', () => {
-      // Load Three.js scene 3 seconds into the 6 second video
-      // This leaves enough time for shader compilation in the background
-      if (introVideo.currentTime > 3.0) {
-        loadThreeJS();
+    // Determine if we should skip the intro video.
+    // We skip it if the user has already seen it this session AND they did not just reload the page.
+    let skipIntro = false;
+    try {
+      const navEntries = performance.getEntriesByType("navigation");
+      const isReload = (navEntries.length > 0 && navEntries[0].type === "reload") || 
+                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+      
+      if (!isReload && sessionStorage.getItem('introPlayed') === 'true') {
+        skipIntro = true;
       }
-    });
+    } catch (e) {}
+
+    // Mark as played for any future internal navigation
+    sessionStorage.setItem('introPlayed', 'true');
+
+    if (skipIntro) {
+      // Instantly hide the loading screen and load the 3D scene
+      loadingScreen.style.display = 'none';
+      if (introVideo) introVideo.remove();
+      loadThreeJS();
+    } else {
+      introVideo.addEventListener('timeupdate', () => {
+        // Load Three.js scene later into the 6 second video (e.g. 4.5s)
+        // This leaves enough time for shader compilation in the background
+        // without affecting the initial video startup speed and smoothness.
+        if (introVideo.currentTime > 4.5) {
+          loadThreeJS();
+        }
+      });
 
     function removeLoadingScreen() {
       loadThreeJS(); // Fallback to ensure it loads if skipped
@@ -397,17 +362,18 @@ canvas {
       }
     }
 
-    // When the video ends naturally
-    introVideo.addEventListener('ended', removeLoadingScreen);
-    
-    // Failsafe in case video can't play or errors
-    introVideo.addEventListener('error', removeLoadingScreen);
-    
-    // Click to skip functionality for better UX
-    loadingScreen.addEventListener('click', removeLoadingScreen);
+      // When the video ends naturally
+      introVideo.addEventListener('ended', removeLoadingScreen);
+      
+      // Failsafe in case video can't play or errors
+      introVideo.addEventListener('error', removeLoadingScreen);
+      
+      // Click to skip functionality for better UX
+      loadingScreen.addEventListener('click', removeLoadingScreen);
 
-    // Hard fallback removed: we only fade out if video finishes or user clicks to skip
-    // because downloading over a slow connection might take longer than 7s.
+      // Hard fallback after 7 seconds max (since video is 6 seconds)
+      setTimeout(removeLoadingScreen, 7000);
+    }
   </script>
 
 </body>
