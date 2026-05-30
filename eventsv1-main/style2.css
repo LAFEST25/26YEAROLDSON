@@ -337,10 +337,12 @@ body {
 
 #prevBtn {
     left: -50px;
+    z-index: 9999999;
 }
 
 #nextBtn {
     right: -50px;
+    z-index: 9999999;
 }
 
 #closeBtn {
@@ -349,7 +351,7 @@ body {
     right: 20px;
     font-size: 28px;
     cursor: pointer;
-    z-index: 10000;
+    z-index: 9999999999999;
     transition:
         transform 0.2s ease,
         color 0.2s ease;
