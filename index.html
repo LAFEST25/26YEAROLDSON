@@ -324,6 +324,7 @@ canvas {
 
   <div id="root"></div>
 
+
   <script>
     const introVideo = document.getElementById('introVideo');
     const loadingScreen = document.getElementById('loadingScreen');
@@ -341,21 +342,32 @@ canvas {
       document.body.appendChild(script);
     }
     
-    // Check if intro was already played in this session
-    if (sessionStorage.getItem('introPlayed') === 'true') {
+    // Check if user came from another page on the same website and it is NOT a reload
+    let skipIntro = false;
+    try {
+      const isInternal = document.referrer && new URL(document.referrer).hostname === window.location.hostname;
+      const navEntries = performance.getEntriesByType("navigation");
+      const isReload = (navEntries.length > 0 && navEntries[0].type === "reload") || 
+                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+      
+      if (isInternal && !isReload) {
+        skipIntro = true;
+      }
+    } catch (e) {
+      // Fallback in case of errors
+    }
+    
+    if (skipIntro) {
       // Skip the video intro completely
       loadingScreen.style.display = 'none';
       if (introVideo) introVideo.remove();
       loadThreeJS();
     } else {
-      // Mark intro as played for future navigation
-      sessionStorage.setItem('introPlayed', 'true');
-
       introVideo.addEventListener('timeupdate', () => {
-        // Load Three.js scene 3 seconds into the 6 second video
+        // Load Three.js scene later into the 6 second video (e.g. 4.5s)
         // This leaves enough time for shader compilation in the background
         // without affecting the initial video startup speed and smoothness.
-        if (introVideo.currentTime > 3.0) {
+        if (introVideo.currentTime > 4.5) {
           loadThreeJS();
         }
       });
