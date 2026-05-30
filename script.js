@@ -21,8 +21,16 @@ const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerH
 // Camera fixed position — looking slightly BELOW the black hole center
 // This makes the black hole appear in the upper portion of the screen
 const VISUAL_LIFT = 1.0; // << INCREASE to push black hole higher on screen, DECREASE to lower it
-camera.position.set(0, 2.8, 9.5);
-camera.lookAt(0, -VISUAL_LIFT, 0);
+
+function updateCameraPosition() {
+  if (window.innerWidth < 768) {
+    camera.position.set(0, 2.8, 16); // Zoom out for mobile
+  } else {
+    camera.position.set(0, 2.8, 9.5); // Original for desktop
+  }
+  camera.lookAt(0, -VISUAL_LIFT, 0);
+}
+updateCameraPosition();
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -615,8 +623,8 @@ styleSheet.textContent = `
     animation: topTitleFadeIn 1.5s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
   }
   @keyframes topTitleFadeIn {
-    from { opacity: 0; transform: translateX(-50%) translateY(-20px); letter-spacing: 24px; padding-left: 24px; }
-    to { opacity: 1; transform: translateX(-50%) translateY(0); letter-spacing: 18px; padding-left: 18px; }
+    from { opacity: 0; transform: translateX(-50%) translateY(-20px); letter-spacing: 24px; padding-left: 0px; }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); letter-spacing: 18px; padding-left: 0px; }
   }
 
   @media (max-width: 1024px) {
@@ -700,11 +708,14 @@ topTitleEl.innerHTML = `
     font-size: 36px;
     font-weight: 400;
     letter-spacing: 18px;
-    padding-left: 18px;
-    text-indent: 0;
     color: rgba(140, 200, 255, 0.9);
     text-shadow: 0 0 20px rgba(60, 150, 255, 0.45), 0 0 50px rgba(40, 120, 255, 0.25), 0 0 90px rgba(30, 100, 255, 0.12);
     line-height: 1.1;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    padding-left: 0;
     position: relative;
     animation: titleGlow 3s ease-in-out infinite alternate;
   ">LAFEST 26</div>
@@ -973,6 +984,7 @@ renderer.setAnimationLoop(animate);
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  updateCameraPosition();
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   composer.setSize(window.innerWidth, window.innerHeight);
