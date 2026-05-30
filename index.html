@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LA 2K26.</title>
-<link rel="preload" as="video" href="logofirst6secs.mp4" type="video/mp4">
+<link rel="preload" as="video" href="logofirst6secs.mp4" type="video/mp4" fetchpriority="high">
 
 <style>
     *{
@@ -320,37 +320,63 @@ video::-webkit-media-controls-enclosure {
       script.src = 'script.js';
       document.body.appendChild(script);
     }
-    
-    introVideo.addEventListener('timeupdate', () => {
-      // Load Three.js scene 3 seconds into the 6 second video
-      // This leaves enough time for shader compilation in the background
-      // without affecting the initial video startup speed and smoothness.
-      if (introVideo.currentTime > 3.0) {
-        loadThreeJS();
-      }
-    });
 
-    function removeLoadingScreen() {
-      loadThreeJS(); // Fallback to ensure it loads if skipped
-      if (!loadingScreen.classList.contains('hide')) {
-        loadingScreen.classList.add('hide');
-        setTimeout(() => {
-          loadingScreen.remove();
-        }, 1000); // 1s matches the CSS transition opacity 0.8s
+    // Determine if we should skip the video
+    let skipIntro = false;
+    try {
+      // Check if it's a page reload
+      const navEntries = performance.getEntriesByType("navigation");
+      const isReload = (navEntries.length > 0 && navEntries[0].type === "reload") || 
+                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+      
+      // If intro was played this session AND this is NOT a reload, skip it
+      if (sessionStorage.getItem('introPlayed') === 'true' && !isReload) {
+        skipIntro = true;
       }
+      
+      // Mark as played for this session
+      sessionStorage.setItem('introPlayed', 'true');
+    } catch (e) {
+      console.warn("Could not check navigation type", e);
     }
-
-    // When the video ends naturally
-    introVideo.addEventListener('ended', removeLoadingScreen);
     
-    // Failsafe in case video can't play or errors
-    introVideo.addEventListener('error', removeLoadingScreen);
-    
-    // Click to skip functionality for better UX
-    loadingScreen.addEventListener('click', removeLoadingScreen);
+    if (skipIntro) {
+      // Skip the video intro completely
+      loadingScreen.style.display = 'none';
+      if (introVideo) introVideo.remove();
+      loadThreeJS();
+    } else {
+      introVideo.addEventListener('timeupdate', () => {
+        // Load Three.js scene later into the 6 second video (e.g. 4.5s)
+        // This leaves enough time for shader compilation in the background
+        // without affecting the initial video startup speed and smoothness.
+        if (introVideo.currentTime > 4.5) {
+          loadThreeJS();
+        }
+      });
 
-    // Hard fallback after 7 seconds max (since video is 6 seconds)
-    setTimeout(removeLoadingScreen, 7000);
+      function removeLoadingScreen() {
+        loadThreeJS(); // Fallback to ensure it loads if skipped
+        if (!loadingScreen.classList.contains('hide')) {
+          loadingScreen.classList.add('hide');
+          setTimeout(() => {
+            loadingScreen.remove();
+          }, 1000); // 1s matches the CSS transition opacity 0.8s
+        }
+      }
+
+      // When the video ends naturally
+      introVideo.addEventListener('ended', removeLoadingScreen);
+      
+      // Failsafe in case video can't play or errors
+      introVideo.addEventListener('error', removeLoadingScreen);
+      
+      // Click to skip functionality for better UX
+      loadingScreen.addEventListener('click', removeLoadingScreen);
+
+      // Hard fallback after 7 seconds max (since video is 6 seconds)
+      setTimeout(removeLoadingScreen, 7000);
+    }
   </script>
 
 </body>
