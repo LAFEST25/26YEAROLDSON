@@ -327,88 +327,61 @@ canvas {
   <script>
     const introVideo = document.getElementById('introVideo');
     const loadingScreen = document.getElementById('loadingScreen');
-    const videoLoader = document.getElementById('videoLoader');
-    const loaderText = document.getElementById('loaderText');
-
+    
+    // To ensure ZERO lag during the first crucial seconds of the video intro,
+    // we defer loading the heavy Three.js script (which compiles shaders)
+    // until the video is partially played.
     let scriptLoaded = false;
     function loadThreeJS() {
       if (scriptLoaded) return;
       scriptLoaded = true;
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = 'opt-script.js';
+      script.src = 'script.js';
       document.body.appendChild(script);
     }
     
-    // 1. Fetch the video fully before playing to guarantee zero buffering lag.
-    function preloadVideo(url) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.responseType = 'blob';
+    // Check if intro was already played in this session
+    if (sessionStorage.getItem('introPlayed') === 'true') {
+      // Skip the video intro completely
+      loadingScreen.style.display = 'none';
+      if (introVideo) introVideo.remove();
+      loadThreeJS();
+    } else {
+      // Mark intro as played for future navigation
+      sessionStorage.setItem('introPlayed', 'true');
 
-      xhr.onprogress = function(e) {
-        if (e.lengthComputable) {
-          const percentComplete = Math.floor((e.loaded / e.total) * 100);
-          loaderText.innerText = `LOADING... ${percentComplete}%`;
+      introVideo.addEventListener('timeupdate', () => {
+        // Load Three.js scene 3 seconds into the 6 second video
+        // This leaves enough time for shader compilation in the background
+        // without affecting the initial video startup speed and smoothness.
+        if (introVideo.currentTime > 3.0) {
+          loadThreeJS();
         }
-      };
+      });
 
-      xhr.onload = function() {
-        if (this.status === 200) {
-          const videoBlob = this.response;
-          const vidURL = URL.createObjectURL(videoBlob);
-          
-          // Hide loader, load blob into video, and play it
-          videoLoader.style.display = 'none';
-          introVideo.src = vidURL;
-          introVideo.play();
+      function removeLoadingScreen() {
+        loadThreeJS(); // Fallback to ensure it loads if skipped
+        if (!loadingScreen.classList.contains('hide')) {
+          loadingScreen.classList.add('hide');
+          setTimeout(() => {
+            loadingScreen.remove();
+          }, 1000); // 1s matches the CSS transition opacity 0.8s
         }
-      };
-
-      xhr.onerror = function() {
-        // Fallback: if fetch blocks, just play it normally
-        loaderText.innerText = `LOADING...`;
-        introVideo.src = url;
-        introVideo.play();
-        videoLoader.style.display = 'none';
-      };
-
-      xhr.send();
-    }
-
-    // Start full preload of the video 
-    preloadVideo("logofirst6secs.mp4");
-
-    introVideo.addEventListener('timeupdate', () => {
-      // Load Three.js scene 3 seconds into the 6 second video
-      // This leaves enough time for shader compilation in the background
-      if (introVideo.currentTime > 3.0) {
-        loadThreeJS();
       }
-    });
 
-    function removeLoadingScreen() {
-      loadThreeJS(); // Fallback to ensure it loads if skipped
-      if (!loadingScreen.classList.contains('hide')) {
-        loadingScreen.classList.add('hide');
-        setTimeout(() => {
-          loadingScreen.remove();
-        }, 1000); // 1s matches the CSS transition opacity 0.8s
-      }
+      // When the video ends naturally
+      introVideo.addEventListener('ended', removeLoadingScreen);
+      
+      // Failsafe in case video can't play or errors
+      introVideo.addEventListener('error', removeLoadingScreen);
+      
+      // Click to skip functionality for better UX
+      loadingScreen.addEventListener('click', removeLoadingScreen);
+
+      // Hard fallback after 7 seconds max (since video is 6 seconds)
+      setTimeout(removeLoadingScreen, 7000);
     }
-
-    // When the video ends naturally
-    introVideo.addEventListener('ended', removeLoadingScreen);
-    
-    // Failsafe in case video can't play or errors
-    introVideo.addEventListener('error', removeLoadingScreen);
-    
-    // Click to skip functionality for better UX
-    loadingScreen.addEventListener('click', removeLoadingScreen);
-
-    // Hard fallback removed: we only fade out if video finishes or user clicks to skip
-    // because downloading over a slow connection might take longer than 7s.
   </script>
-
 </body>
 </html>
