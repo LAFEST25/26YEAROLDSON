@@ -666,7 +666,8 @@ styleSheet.textContent = `
     .nav-item[data-pos="br"] { right: 10px !important; bottom: 42px !important; }
     .nav-item[data-pos="bl"] { left: 10px !important; bottom: 42px !important; }
     .nav-item .nav-label { font-size: 14px !important; letter-spacing: 2px !important; }
-    .nav-item .nav-subtitle { font-size: 6px !important; letter-spacing: 1px !important; }
+    /* Make nav subtitles slightly more readable on small phones without making them large */
+    .nav-item .nav-subtitle { font-size: 10px !important; letter-spacing: 1.5px !important; color: rgba(100, 170, 255, 0.55) !important; opacity: 0.95 !important; }
     .nav-item .nav-marker { width: 10px !important; margin-bottom: 4px !important; }
     .bottom-title { transform: translateX(-50%) !important; bottom: 100px !important; }
     .top-title .top-title-main { font-size: 28px !important; letter-spacing: 8px !important; margin-top: 70px !important; }
@@ -684,7 +685,8 @@ styleSheet.textContent = `
     .nav-item[data-pos="br"] { right: 5px !important; bottom: 35px !important; }
     .nav-item[data-pos="bl"] { left: 5px !important; bottom: 35px !important; }
     .nav-item .nav-label { font-size: 12px !important; letter-spacing: 1.5px !important; }
-    .nav-item .nav-subtitle { display: none !important; }
+    /* Keep subtitles visible on very small screens but slightly smaller */
+    .nav-item .nav-subtitle { display: block !important; font-size: 9px !important; letter-spacing: 1px !important; color: rgba(100, 170, 255, 0.5) !important; opacity: 0.95 !important; }
     .bottom-title { transform: translateX(-50%) !important; bottom: 90px !important; }
     .top-title .top-title-main { font-size: 22px !important; letter-spacing: 6px !important; margin-top: 50px !important; }
     .top-title { padding-top: 8px !important; }
