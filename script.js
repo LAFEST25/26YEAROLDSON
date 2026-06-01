@@ -756,6 +756,51 @@ titleEl.innerHTML = `
 
 document.body.appendChild(titleEl);
 
+const registerBtn = document.createElement('a');
+
+registerBtn.href = 'https://yourwebsite.com';
+registerBtn.target = '_blank';
+
+registerBtn.textContent = 'REGISTER NOW';
+
+registerBtn.style.cssText = `
+  position: fixed;
+  left: 50%;
+  bottom: 120px; /* sits above the tagline */
+  transform: translateX(-50%);
+  z-index: 20;
+
+  padding: 10px 22px;
+
+  border: 2px solid #3c96ff;
+  color: #3c96ff;
+  background: transparent;
+
+  text-decoration: none;
+  font-family: 'Beasigne', 'Inter', sans-serif;
+  letter-spacing: 2px;
+  font-size: 9px;
+
+  transition: all 0.4s ease;
+  overflow: hidden;
+`;
+
+registerBtn.addEventListener('mouseenter', () => {
+  registerBtn.style.background = '#3c96ff';
+  registerBtn.style.color = '#ffffff 0.10';
+  registerBtn.style.webkitTextStroke = '1px white';
+});
+
+registerBtn.addEventListener('mouseleave', () => {
+  registerBtn.style.background = 'transparent';
+  registerBtn.style.color = '#3c96ff';
+  registerBtn.style.webkitTextStroke = '0px';
+});
+
+registerBtn.className = 'register-btn';
+
+document.body.appendChild(registerBtn);
+
 // 2. Add a tiny responsive CSS style block to automatically scale the font on small screens
 const style = document.createElement('style');
 style.textContent = `
