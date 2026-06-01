@@ -788,13 +788,23 @@ registerBtn.style.cssText = `
 
 registerBtn.addEventListener('mouseenter', () => {
   registerBtn.style.background = '#3c96ff';
+  
+  registerBtn.style.webkitBackgroundClip = 'text';
+  registerBtn.style.backgroundClip = 'text';
+  
+  registerBtn.style.webkitTextFillColor = 'transparent';
   registerBtn.style.color = 'transparent';
+  
+  registerBtn.style.webkitTextStroke = '0px';
 });
 
 registerBtn.addEventListener('mouseleave', () => {
   registerBtn.style.background = 'transparent';
+  registerBtn.style.webkitBackgroundClip = 'initial';
+  registerBtn.style.backgroundClip = 'initial';
+  
+  registerBtn.style.webkitTextFillColor = '#3c96ff';
   registerBtn.style.color = '#3c96ff';
-  registerBtn.style.webkitTextStroke = '0px';
 });
 
 registerBtn.className = 'register-btn';
