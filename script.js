@@ -787,22 +787,34 @@ registerBtn.style.cssText = `
 `;
 
 registerBtn.addEventListener('mouseenter', () => {
-  registerBtn.style.background = '#3c96ff';
   
+  registerBtn.style.background = '#3c96ff';
+  registerBtn.style.borderColor = '#3c96ff';
+
+
+  registerBtn.style.webkitTextStroke = '0px';
+
+
+  btnText.style.color = 'transparent';
+  btnText.style.webkitTextFillColor = 'transparent';
+
  
-  registerBtn.style.webkitMaskImage = 'linear-gradient(#fff, #fff)';
-  registerBtn.style.webkitMaskComposite = 'xor'; 
-  registerBtn.style.maskComposite = 'exclude';  
+  btnText.style.backgroundImage = 'inherit'; 
+  btnText.style.webkitBackgroundClip = 'text';
+  btnText.style.backgroundClip = 'text';
 });
 
 registerBtn.addEventListener('mouseleave', () => {
 
   registerBtn.style.background = 'transparent';
-  registerBtn.style.webkitMaskImage = 'none';
-  registerBtn.style.webkitMaskComposite = 'none';
-  registerBtn.style.maskComposite = 'none';
-});
+  registerBtn.style.borderColor = '#3c96ff';
 
+  btnText.style.color = '#3c96ff';
+  btnText.style.webkitTextFillColor = '#3c96ff';
+  btnText.style.backgroundImage = 'none';
+  btnText.style.webkitBackgroundClip = 'initial';
+  btnText.style.backgroundClip = 'initial';
+});
 registerBtn.className = 'register-btn';
 function updateButtonPosition() {
   registerBtn.style.bottom =
