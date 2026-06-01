@@ -795,7 +795,7 @@ registerBtn.addEventListener('mouseenter', () => {
   registerBtn.style.webkitTextStroke = '0px';
 
 
-  btnText.style.color = 'transparent';
+  btnText.style.color = '#ffffff';
   btnText.style.webkitTextFillColor = 'transparent';
 
  
