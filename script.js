@@ -758,7 +758,7 @@ document.body.appendChild(titleEl);
 
 const registerBtn = document.createElement('a');
 
-registerBtn.href = 'https://yourwebsite.com';
+registerBtn.href = 'https://regdraftfinal.lovable.app/school';
 registerBtn.target = '_blank';
 
 registerBtn.textContent = 'REGISTER NOW';
