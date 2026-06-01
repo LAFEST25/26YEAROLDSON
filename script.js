@@ -784,9 +784,6 @@ registerBtn.style.cssText = `
   transition: all 0.4s ease;
   overflow: hidden;
 
-  @media (max-width:768px){
-  bottom: 200px;
-  }
 `;
 
 registerBtn.addEventListener('mouseenter', () => {
@@ -802,6 +799,13 @@ registerBtn.addEventListener('mouseleave', () => {
 });
 
 registerBtn.className = 'register-btn';
+function updateButtonPosition() {
+  registerBtn.style.bottom =
+    window.innerWidth < 768 ? '20%' : '120px';
+}
+
+updateButtonPosition();
+window.addEventListener('resize', updateButtonPosition);
 
 document.body.appendChild(registerBtn);
 
