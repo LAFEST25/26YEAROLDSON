@@ -787,21 +787,20 @@ registerBtn.style.cssText = `
 `;
 
 registerBtn.addEventListener('mouseenter', () => {
- 
   registerBtn.style.background = '#3c96ff';
   
-  
-  registerBtn.style.color = '#ffffff';
-  
-  
-  registerBtn.style.mixBlendMode = 'screen'; 
+ 
+  registerBtn.style.webkitMaskImage = 'linear-gradient(#fff, #fff)';
+  registerBtn.style.webkitMaskComposite = 'xor'; 
+  registerBtn.style.maskComposite = 'exclude';  
 });
 
 registerBtn.addEventListener('mouseleave', () => {
- 
+
   registerBtn.style.background = 'transparent';
-  registerBtn.style.color = '#3c96ff';
-  registerBtn.style.mixBlendMode = 'normal';
+  registerBtn.style.webkitMaskImage = 'none';
+  registerBtn.style.webkitMaskComposite = 'none';
+  registerBtn.style.maskComposite = 'none';
 });
 
 registerBtn.className = 'register-btn';
