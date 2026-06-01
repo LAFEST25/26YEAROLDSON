@@ -783,6 +783,10 @@ registerBtn.style.cssText = `
 
   transition: all 0.4s ease;
   overflow: hidden;
+
+  @media (max-width:768px){
+  bottom: 130px;
+  }
 `;
 
 registerBtn.addEventListener('mouseenter', () => {
