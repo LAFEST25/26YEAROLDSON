@@ -788,8 +788,7 @@ registerBtn.style.cssText = `
 
 registerBtn.addEventListener('mouseenter', () => {
   registerBtn.style.background = '#3c96ff';
-  registerBtn.style.color = '#ffffff 0.10';
-  registerBtn.style.webkitTextStroke = '1px white';
+  registerBtn.style.color = 'transparent';
 });
 
 registerBtn.addEventListener('mouseleave', () => {
@@ -801,7 +800,7 @@ registerBtn.addEventListener('mouseleave', () => {
 registerBtn.className = 'register-btn';
 function updateButtonPosition() {
   registerBtn.style.bottom =
-    window.innerWidth < 768 ? '20%' : '120px';
+    window.innerWidth < 768 ? '22%' : '125px';
 }
 
 updateButtonPosition();
