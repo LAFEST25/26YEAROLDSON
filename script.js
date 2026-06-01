@@ -785,7 +785,7 @@ registerBtn.style.cssText = `
   overflow: hidden;
 
   @media (max-width:768px){
-  bottom: 130px;
+  bottom: 200px;
   }
 `;
 
