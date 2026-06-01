@@ -806,7 +806,7 @@ registerBtn.addEventListener('mouseleave', () => {
 registerBtn.className = 'register-btn';
 function updateButtonPosition() {
   registerBtn.style.bottom =
-    window.innerWidth < 768 ? '22%' : '125px';
+    window.innerWidth < 768 ? '25%' : '130px';
 }
 
 updateButtonPosition();
