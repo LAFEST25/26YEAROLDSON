@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    { 
-      "source": "/registration", 
-      "destination": "https://lafest.in/registration.html" 
-    },
-  ]
-}
