@@ -2,23 +2,7 @@
   "rewrites": [
     { 
       "source": "/registration", 
-      "destination": "https://lovable.app" 
+      "destination": "https://lafest.in/registration.html" 
     },
-    { 
-      "source": "/registration/:path*", 
-      "destination": "https://lovable.app:path*" 
-    },
-    { 
-      "source": "/assets/:path*", 
-      "destination": "https://lovable.appassets/:path*" 
-    },
-    { 
-      "source": "/__l5e/:path*", 
-      "destination": "https://lovable.app__l5e/:path*" 
-    },
-    { 
-      "source": "/~flock.js", 
-      "destination": "https://lovable.app~flock.js" 
-    }
   ]
 }
