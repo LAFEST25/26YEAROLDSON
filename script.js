@@ -758,7 +758,7 @@ document.body.appendChild(titleEl);
 
 const registerBtn = document.createElement('a');
 
-registerBtn.href = 'https://lafest2026registration.lovable.app/';
+registerBtn.href = '#';
 registerBtn.target = '_blank';
 
 registerBtn.textContent = 'REGISTER NOW';
