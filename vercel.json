@@ -1,3 +1,12 @@
 {
-  "rewrites": [{ "source": "/registration", "destination": "https://lafest2026registration.lovable.app" }]
+  "rewrites": [
+    { 
+      "source": "/registration", 
+      "destination": "https://lovable.app" 
+    },
+    { 
+      "source": "/assets/:path*", 
+      "destination": "https://lovable.app/assets/:path*" 
+    }
+  ]
 }
