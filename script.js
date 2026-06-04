@@ -769,7 +769,7 @@ registerBtn.style.cssText = `
   bottom: 120px; /* sits above the tagline */
   transform: translateX(-50%);
   z-index: 20;
-
+  text-align: center;
   padding: 10px 22px;
 
   border: 2px solid #3c96ff;
