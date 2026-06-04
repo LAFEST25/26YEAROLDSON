@@ -2,11 +2,19 @@
   "rewrites": [
     { 
       "source": "/registration", 
-      "destination": "https://lafest2026registration.lovable.app" 
+      "destination": "https://lafest2026registration.lovable.app/" 
     },
     { 
       "source": "/assets/:path*", 
-      "destination": "https://lafest2026registration.lovable.app/assets/:path*" 
+      "destination": "https://lovable.app*" 
+    },
+    { 
+      "source": "/__l5e/:path*", 
+      "destination": "https://lovable.app*" 
+    },
+    { 
+      "source": "/~flock.js", 
+      "destination": "https://lovable.app" 
     }
   ]
 }
