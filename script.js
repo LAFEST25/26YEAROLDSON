@@ -758,8 +758,8 @@ document.body.appendChild(titleEl);
 
 const registerBtn = document.createElement('a');
 
-registerBtn.href = 'https://lafest2026schoolregistration.lovable.app/';
-registerBtn.target = 'https://lafest2026schoolregistration.lovable.app/';
+registerBtn.href = 'https://lafest2026registration.lovable.app';
+registerBtn.target = 'https://lafest2026registration.lovable.app';
 
 registerBtn.textContent = 'REGISTER NOW';
 
