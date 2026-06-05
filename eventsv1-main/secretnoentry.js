@@ -51,7 +51,7 @@ const modalElement = document.getElementById("modal");
 let currentRotation = 0;
 let targetRotation = 0;
 let isHovering = false;
-let autoRotateSpeed = 0.2; // Degrees per frame (slower)
+let autoRotateSpeed = 0.15; // Degrees per frame (slower)
 let autoRotateEnabled = true; // turns false when user intervenes (wheel / buttons)
 let animationFrameId;
 let inactivityTimer = null; // re-enable auto-rotate after timeout
