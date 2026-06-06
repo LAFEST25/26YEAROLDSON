@@ -226,7 +226,7 @@ body {
     border-radius: 20px;
     padding: 20px;
     color: white;
-    box-shadow: 0 0 40px cyan;
+    box-shadow: 0 0 30px #0020e37d;
     display: flex;
     flex-direction: column;
 }
